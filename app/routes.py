@@ -35,41 +35,43 @@ def add_player():
         return jsonify("Access denied"), 403
 
     request_body = request.get_json()
+    phone = request_body['phone']
+    username = request_body['username']
     error_msg = {}
-    if Player.query.get(request_body['username']):
+    if Player.query.filter(Player.username == username).first():
         error_msg["username"] = "Sorry, that username is taken"
-    if Player.query.filter(Player.phone_number == request_body['phone']).first():
+    if Player.query.filter(Player.phone_number == phone).first():
         error_msg["phone"] = "The phone number you entered is already registered with an account"
     if error_msg:
         return jsonify(error_msg), 400
 
-    new_player = Player(username=request_body['username'], phone_number=request_body["phone"])
+    new_player = Player(username=username, phone_number=phone)
     db.session.add(new_player)
     db.session.commit()
     return jsonify(f"{request_body['username']} successfully created"), 201
 
-@players_bp.route("<username>", methods=['GET'], strict_slashes=False)
-def get_player(username):
+@players_bp.route("<id>", methods=['GET'], strict_slashes=False)
+def get_player(id):
     api_key = request.args.get('API_KEY')
     if api_key != os.environ.get("API_KEY"):
         return jsonify("Access denied"), 403
 
-    player = Player.query.get_or_404(username)
+    player = Player.query.get_or_404(id)
     return jsonify(player.to_dict()), 200
     
-@players_bp.route("<username>", methods=['PATCH'], strict_slashes=False)
-def update_player(username):
+@players_bp.route("<player_id>", methods=['PATCH'], strict_slashes=False)
+def update_player(player_id):
     api_key = request.args.get('API_KEY')
     if api_key != os.environ.get("API_KEY"):
         return jsonify("Access denied"), 403
 
-    player = Player.query.get_or_404(username)
+    player = Player.query.get_or_404(player_id)
     
     request_body = request.get_json()
     username = request_body.get('username')
     phone = request_body.get('phone')
     error_msg = {}
-    if Player.query.get(username):
+    if Player.query.filter(Player.username == username).first():
         error_msg["username"] = "Sorry, that username is taken"
     if Player.query.filter(Player.phone_number == phone).first():
         error_msg["phone"] = "The phone number you entered is already registered with an account"
@@ -77,11 +79,7 @@ def update_player(username):
         return jsonify(error_msg), 400
 
     if username:
-        old_username = player.username #new
         player.username = username
-        trips = PlayerTrip.query.filter(PlayerTrip.username == old_username)
-        for trip in trips:
-            trip.username = username
 
     if phone:
         player.phone_number = phone
@@ -112,13 +110,13 @@ def add_player_to_trip():
         return jsonify("Access denied"), 403
 
     trip_id = request.args.get("trip_id")
-    username = request.args.get('username')
+    player_id = request.args.get('player_id')
 
-    player = Player.query.get_or_404(username)
+    player = Player.query.get_or_404(player_id)
     trip = Trip.query.get_or_404(trip_id)
 
     player.trips.append(trip)
     db.session.commit()
 
-    return jsonify(f"trip successfully added to {username}'s profile"), 200
+    return jsonify(f"trip successfully added to {player.username}'s profile"), 200
 

@@ -42,7 +42,7 @@ def two_players_one_trip(app):
     db.session.add_all([player1, player2, trip])
     db.session.commit()
 
-    michelle = Player.query.get("michellebodart")
+    michelle = Player.query.get(1)
     trip = Trip.query.get(1)
     michelle.trips.append(trip)
     db.session.commit()
