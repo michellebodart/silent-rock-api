@@ -21,8 +21,10 @@ def create_app(test_config=None):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from .routes import players_bp
+    from .routes import players_bp, trips_bp, players_trips_bp
     app.register_blueprint(players_bp)
+    app.register_blueprint(trips_bp)
+    app.register_blueprint(players_trips_bp)
 
     from app.models.player import Player
     from app.models.trip import Trip

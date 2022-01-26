@@ -6,7 +6,13 @@ class Trip(db.Model):
     date = db.Column(db.DateTime)
 
     def to_dict(self):
+        if self.date.month < 11:
+            season = str(self.date.year-1) + "-" + str(self.date.year)
+        else:
+            season = str(self.date.year) + "-" + str(self.date.year + 1)
+
         return {
             "id": self.id,
-            "date": self.date
+            "date": self.date,
+            "season": season
         }
