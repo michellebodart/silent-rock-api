@@ -3,6 +3,7 @@ from flask.json import jsonify
 from app import db
 from app.models.player import Player
 from app.models.trip import Trip
+from app.models.player_trip import PlayerTrip
 from dotenv import load_dotenv
 import os
 from datetime import datetime
@@ -76,9 +77,15 @@ def update_player(username):
         return jsonify(error_msg), 400
 
     if username:
+        old_username = player.username #new
         player.username = username
+        trips = PlayerTrip.query.filter(PlayerTrip.username == old_username)
+        for trip in trips:
+            trip.username = username
+
     if phone:
         player.phone_number = phone
+
     db.session.commit()
     return jsonify(f"{player.username} successfully updated"), 200
 
@@ -105,7 +112,7 @@ def add_player_to_trip():
         return jsonify("Access denied"), 403
 
     trip_id = request.args.get("trip_id")
-    username = request.args.get("username")
+    username = request.args.get('username')
 
     player = Player.query.get_or_404(username)
     trip = Trip.query.get_or_404(trip_id)
