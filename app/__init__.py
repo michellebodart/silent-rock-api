@@ -25,5 +25,7 @@ def create_app(test_config=None):
     app.register_blueprint(players_bp)
 
     from app.models.player import Player
+    from app.models.trip import Trip
+    from app.models.player_trip import PlayerTrip
 
     return app
