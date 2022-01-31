@@ -74,6 +74,7 @@ def update_player(player_id):
     request_body = request.get_json()
     username = request_body.get('username')
     phone = request_body.get('phone')
+    visible_on_leaderboard = request_body.get('visible_on_leaderboard')
     error_msg = {}
     if Player.query.filter(Player.username == username).first():
         error_msg["username"] = "Sorry, that username is taken"
@@ -87,6 +88,9 @@ def update_player(player_id):
 
     if phone:
         player.phone_number = phone
+
+    if visible_on_leaderboard:
+        player.visible_on_leaderboard = visible_on_leaderboard
 
     db.session.commit()
     return jsonify(f"{player.username} successfully updated"), 200
