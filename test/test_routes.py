@@ -88,7 +88,7 @@ def test_post_player_no_players(client):
 
     # Assert
     assert response.status_code == 201
-    assert response_body == "michellebodart successfully created"
+    assert response_body == {'id': 1, 'message': 'michellebodart successfully created'}
 
 def test_post_player_username_taken(client, two_players_no_trips):
     # Act

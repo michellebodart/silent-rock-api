@@ -45,7 +45,7 @@ def add_player():
     if error_msg:
         return jsonify(error_msg), 400
 
-    new_player = Player(username=username, phone_number=phone)
+    new_player = Player(username=username, phone_number=phone, visible_on_leaderboard=True)
     db.session.add(new_player)
     db.session.commit()
     response = {
@@ -90,6 +90,18 @@ def update_player(player_id):
 
     db.session.commit()
     return jsonify(f"{player.username} successfully updated"), 200
+
+@players_bp.route("<player_id>", methods=['DELETE'], strict_slashes=False)
+def delete_player(player_id):
+    api_key = request.args.get('API_KEY')
+    if api_key != os.environ.get("API_KEY"):
+        return jsonify("Access denied"), 403
+
+    player = Player.query.get_or_404(player_id)
+    username = player.username
+    db.session.delete(player)
+    db.session.commit()
+    return jsonify(f"{username} successfully deleted"), 200
 
 # TRIPS ROUTES
 
