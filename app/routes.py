@@ -48,7 +48,11 @@ def add_player():
     new_player = Player(username=username, phone_number=phone)
     db.session.add(new_player)
     db.session.commit()
-    return jsonify(f"{request_body['username']} successfully created"), 201
+    response = {
+        "id": Player.query.filter(Player.username == username).first().id,
+        "message": f"{username} successfully created"
+    }
+    return jsonify(response), 201
 
 @players_bp.route("<id>", methods=['GET'], strict_slashes=False)
 def get_player(id):
