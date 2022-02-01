@@ -20,13 +20,20 @@ players_trips_bp = Blueprint("players_trips", __name__, url_prefix="/players_tri
 @players_bp.route("", methods=['GET'], strict_slashes=False)
 def get_players():
     api_key = request.args.get('API_KEY')
+    sort_basis = request.args.get('sort_basis')
     if api_key != os.environ.get("API_KEY"):
         return jsonify("Access denied"), 403
 
     players = Player.query.all()
     response = [player.to_dict() for player in players]
 
-    return jsonify(response), 200
+    if sort_basis == "username":
+        sorted_response = sorted(response, key = lambda i: i['username'].lower())
+    
+    elif sort_basis == "trips":
+        sorted_response = sorted(response, key = lambda i: len(i['trips']), reverse=True)
+
+    return jsonify(sorted_response), 200
 
 @players_bp.route("", methods=['POST'], strict_slashes=False)
 def add_player():
