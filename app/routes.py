@@ -89,7 +89,7 @@ def update_player(player_id):
     if phone:
         player.phone_number = phone
 
-    if visible_on_leaderboard:
+    if visible_on_leaderboard != None:
         player.visible_on_leaderboard = visible_on_leaderboard
 
     db.session.commit()
