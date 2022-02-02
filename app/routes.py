@@ -32,10 +32,10 @@ def get_players():
     response = [player.to_dict() for player in players]
 
     if sort_basis == "username":
-        sorted_response = sorted(response, key = lambda i: i['username'].lower())
+        response = sorted(response, key = lambda i: i['username'].lower())
     
     elif sort_basis == "trips":
-        sorted_response = sorted(response, key = lambda i: len(i['trips']), reverse=True)
+        response = sorted(response, key = lambda i: len(i['trips']), reverse=True)
 
         if filter_criteria != "all":
             def filter_function(trip):
@@ -43,9 +43,9 @@ def get_players():
                     return True
                 else:
                     return False
-            sorted_response = sorted(sorted_response, key = lambda i: len(list(filter(filter_function, i['trips']))), reverse=True)
+            response = sorted(response, key = lambda i: len(list(filter(filter_function, i['trips']))), reverse=True)
 
-    return jsonify(sorted_response), 200
+    return jsonify(response), 200
 
 @players_bp.route("", methods=['POST'], strict_slashes=False)
 def add_player():
