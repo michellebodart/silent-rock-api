@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask.json import jsonify
+from sqlalchemy import true
 from app import db
 from app.models.player import Player
 from app.models.trip import Trip
@@ -21,10 +22,13 @@ players_trips_bp = Blueprint("players_trips", __name__, url_prefix="/players_tri
 def get_players():
     api_key = request.args.get('API_KEY')
     sort_basis = request.args.get('sort_basis')
+    filter_criteria = request.args.get('filter_criteria')
+
     if api_key != os.environ.get("API_KEY"):
         return jsonify("Access denied"), 403
 
     players = Player.query.all()
+
     response = [player.to_dict() for player in players]
 
     if sort_basis == "username":
@@ -32,6 +36,14 @@ def get_players():
     
     elif sort_basis == "trips":
         sorted_response = sorted(response, key = lambda i: len(i['trips']), reverse=True)
+
+        if filter_criteria != "all":
+            def filter_function(trip):
+                if trip["season"] == filter_criteria:
+                    return True
+                else:
+                    return False
+            sorted_response = sorted(sorted_response, key = lambda i: len(list(filter(filter_function, i['trips']))), reverse=True)
 
     return jsonify(sorted_response), 200
 
