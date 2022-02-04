@@ -1,3 +1,4 @@
+from email import message
 from flask import Blueprint, jsonify, request
 from flask.json import jsonify
 from sqlalchemy import true
@@ -138,7 +139,12 @@ def post_trip():
     db.session.add(new_trip)
     db.session.commit()
 
-    return jsonify("Trip successfully created"), 201
+    response = {
+        "message": "Trip successfully create",
+        "trip_id": new_trip.id
+    }
+
+    return jsonify(response), 201
 
 # PLAYERS X TRIPS ROUTES
 
