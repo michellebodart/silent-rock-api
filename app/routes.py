@@ -148,14 +148,19 @@ def add_player_to_trip():
     if api_key != os.environ.get("API_KEY"):
         return jsonify("Access denied"), 403
 
-    trip_id = request.args.get("trip_id")
-    player_id = request.args.get('player_id')
-
-    player = Player.query.get_or_404(player_id)
+    request_body = request.get_json()
+    trip_id = request_body["trip_id"]
+    player_ids = request_body["player_ids"]
     trip = Trip.query.get_or_404(trip_id)
+    player_usernames = []
+    for player_id in player_ids:
+        player = Player.query.get_or_404(player_id)
+        player.trips.append(trip)
+        db.session.commit()
+        player_usernames.append(player.username)
 
-    player.trips.append(trip)
-    db.session.commit()
-
-    return jsonify(f"trip successfully added to {player.username}'s profile"), 200
+    players_string = ""
+    for player_username in player_usernames:
+        players_string += player_username + ", "
+    return jsonify(f"trip successfully added to {players_string}'s profile(s)"), 200
 

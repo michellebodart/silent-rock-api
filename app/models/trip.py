@@ -11,7 +11,7 @@ class Trip(db.Model):
         else:
             season = str(self.date.year) + "-" + str(self.date.year + 1)
 
-        formatted_date = (self.date).strftime("%A, %B %d!%I:%M %p PST")
+        formatted_date = (self.date).strftime("%A, %B %d %Y!%I:%M %p PST")
 
         return {
             "id": self.id,
