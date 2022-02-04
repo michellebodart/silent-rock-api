@@ -10,6 +10,7 @@ class Player(db.Model):
 
     def to_dict(self):
         trips = [trip.to_dict() for trip in self.trips]
+        trips.reverse()
 
         return {
             "id": self.id,
