@@ -159,6 +159,8 @@ def add_player_to_trip():
         db.session.commit()
         player_usernames.append(player.username)
 
+    db.session.commit()
+
     players_string = ""
     for player_username in player_usernames:
         players_string += player_username + ", "
