@@ -185,20 +185,27 @@ def add_player_to_pending_trip():
     request_body = request.get_json()
     trip_id = request_body["trip_id"]
     player_ids = request_body["player_ids"]
+    trip_owner_id = request_body["trip_owner_id"]
     trip = Trip.query.get_or_404(trip_id)
     player_usernames = []
     for player_id in player_ids:
         player = Player.query.get_or_404(player_id)
         player.pending_trips.append(trip)
-        db.session.commit()
         player_usernames.append(player.username)
 
+    db.session.commit()
+
+    for player_id in player_ids:
+        player = Player.query.get_or_404(player_id)
+        pending_trip = PendingPlayerTrip.query.filter(PendingPlayerTrip.player_id==player.id, PendingPlayerTrip.trip_id==trip.id).first()
+        pending_trip.trip_owner_id = trip_owner_id
+    
     db.session.commit()
 
     players_string = ""
     for player_username in player_usernames:
         players_string += player_username + ", "
-    return jsonify(f"trip successfully added to {players_string[:-2]}'s pending trips"), 200
+    return jsonify(f"trip successfully added to {players_string[:-2]}'s pending trips"), 201
 
 @pending_players_trips_bp.route("", methods=["DELETE"], strict_slashes=False)
 def delete_pending_trip():
