@@ -1,4 +1,5 @@
 from app import db
+from app.models.pending_player_trip import PendingPlayerTrip
 
 class Player(db.Model):
     __tablename__ = "players"
@@ -13,7 +14,17 @@ class Player(db.Model):
         trips = [trip.to_dict() for trip in self.trips]
         trips.reverse()
 
-        pending_trips = [pending_trip.to_dict() for pending_trip in self.pending_trips]
+        # pending_trips = [pending_trip.to_dict() for pending_trip in self.pending_trips]
+
+        pending_trips = []
+        for pending_trip in self.pending_trips:
+            response = pending_trip.to_dict()
+            pending_trip_from_join_table = PendingPlayerTrip.query.filter(PendingPlayerTrip.player_id == self.id, PendingPlayerTrip.trip_id == pending_trip.id).first()
+            trip_owner_id = pending_trip_from_join_table.trip_owner_id
+            response["trip_owner_id"] = trip_owner_id
+            pending_trips.append(response)
+
+
         pending_trips.reverse()
 
         return {
