@@ -4,6 +4,8 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
 
+# from app.models import pending_player_trip
+
 db = SQLAlchemy()
 migrate = Migrate()
 load_dotenv()
@@ -21,13 +23,15 @@ def create_app(test_config=None):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from .routes import players_bp, trips_bp, players_trips_bp
+    from .routes import players_bp, trips_bp, players_trips_bp, pending_players_trips_bp
     app.register_blueprint(players_bp)
     app.register_blueprint(trips_bp)
     app.register_blueprint(players_trips_bp)
+    app.register_blueprint(pending_players_trips_bp)
 
     from app.models.player import Player
     from app.models.trip import Trip
     from app.models.player_trip import PlayerTrip
+    from app.models.pending_player_trip import PendingPlayerTrip
 
     return app
