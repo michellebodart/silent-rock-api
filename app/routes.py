@@ -185,7 +185,7 @@ def add_player_to_pending_trip():
     request_body = request.get_json()
     trip_id = request_body["trip_id"]
     player_ids = request_body["player_ids"]
-    trip_owner_id = request_body["trip_owner_id"]
+    trip_owner_username = request_body["trip_owner_username"]
     trip = Trip.query.get_or_404(trip_id)
     player_usernames = []
     for player_id in player_ids:
@@ -198,7 +198,7 @@ def add_player_to_pending_trip():
     for player_id in player_ids:
         player = Player.query.get_or_404(player_id)
         pending_trip = PendingPlayerTrip.query.filter(PendingPlayerTrip.player_id==player.id, PendingPlayerTrip.trip_id==trip.id).first()
-        pending_trip.trip_owner_id = trip_owner_id
+        pending_trip.trip_owner_username = trip_owner_username
     
     db.session.commit()
 

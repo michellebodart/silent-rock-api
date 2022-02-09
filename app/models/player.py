@@ -20,8 +20,8 @@ class Player(db.Model):
         for pending_trip in self.pending_trips:
             response = pending_trip.to_dict()
             pending_trip_from_join_table = PendingPlayerTrip.query.filter(PendingPlayerTrip.player_id == self.id, PendingPlayerTrip.trip_id == pending_trip.id).first()
-            trip_owner_id = pending_trip_from_join_table.trip_owner_id
-            response["trip_owner_id"] = trip_owner_id
+            trip_owner_username = pending_trip_from_join_table.trip_owner_username
+            response["trip_owner_username"] = trip_owner_username
             pending_trips.append(response)
 
 
