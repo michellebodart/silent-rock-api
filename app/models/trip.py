@@ -1,4 +1,5 @@
 from app import db
+from datetime import timedelta
 
 class Trip(db.Model):
     __tablename__ = "trips"
@@ -11,7 +12,8 @@ class Trip(db.Model):
         else:
             season = str(self.date.year) + "-" + str(self.date.year + 1)
 
-        formatted_date = (self.date).strftime("%A, %B %d %Y!%I:%M %p PST")
+        h = timedelta(hours=8)
+        formatted_date = (self.date-h).strftime("%A, %B %d %Y!%I:%M %p PST")
 
         return {
             "id": self.id,
